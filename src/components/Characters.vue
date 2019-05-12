@@ -3,6 +3,11 @@
         <h3>
             Hello this is my first project VueJs
         </h3>
+        <ul>
+            <li v-for="character in characters">
+                {{character.name}}
+            </li>
+        </ul>
     </div>
 
 </template>
@@ -13,6 +18,11 @@ import axios from 'axios'
 import Crypto from 'crypto-js'
 export default {
     name: 'Characters',
+    data() {
+        return {
+            characters: []
+        }
+    },
     mounted() {
         console.log('call get Characters')
         this.getCharacters();
@@ -21,7 +31,11 @@ export default {
         getCharacters: function() {
             axios.get(`http://gateway.marvel.com/v1/public/characters?ts=1&apikey=${public_key}&hash=${Crypto.MD5('1'+secret_key+public_key).toString()}`)
             .then( (result) => {
-                console.log(JSON.stringify(result, null, 2))
+                
+                result.data.data.results.forEach(element => {
+                    console.log(JSON.stringify(element, null, 2))
+                    this.characters.push(element)
+                });
             })
             .catch((error) => {
                 console.log('quan; ' +JSON.stringify(error, null, 2))
